@@ -1040,9 +1040,59 @@ describe('slug', function () {
     assert.strictEqual(slug('justin babysitter', { multicharmap: multicharmap }), 'justin-dadbysitter')
   })
 
+  it('should match the longer of two matching strings in a multicharmap', function () {
+    const multicharmap = { foo: 'f', foobar: 'b' }
+    const otherMulticharmap = { foobar: 'b', foo: 'f' }
+    assert.strictEqual(slug('foobar', { multicharmap: multicharmap }), 'b')
+    assert.strictEqual(slug('foobar', { multicharmap: otherMulticharmap }), 'b')
+  })
+
   it('should respect the remove option', function () {
     assert.strictEqual(slug('food', { remove: /[od]/g }), 'f')
     assert.strictEqual(slug('one 1 two 2 three 3', { remove: /[0-9]/g }), 'one-two-three')
     assert.strictEqual(slug('one 1 two 2 three 3'), 'one-1-two-2-three-3')
+  })
+
+  it('should replace hebrew', function () {
+    const charMap = {
+      א: 'a',
+      ב: 'b',
+      ג: 'g',
+      ד: 'd',
+      ה: 'h',
+      ו: 'v',
+      ז: 'z',
+      ח: 'h',
+      ט: 't',
+      י: 'y',
+      ך: 'k',
+      כ: 'k',
+      ל: 'l',
+      ם: 'm',
+      מ: 'm',
+      ן: 'n',
+      נ: 'n',
+      ס: 's',
+      ע: 'e',
+      ף: 'p',
+      פ: 'p',
+      ץ: 'ts',
+      צ: 'ts',
+      ק: 'q',
+      ר: 'r',
+      ש: 'sh',
+      ת: 't',
+      ' ָ': 'a',
+      ' ַ': 'a',
+      ' ּ': 'i',
+      ײ: 'i',
+      װ: 'y',
+      ױ: 'yi',
+      ' ֿ': 'a'
+    }
+    for (let char in charMap) { // eslint-disable-line prefer-const
+      const replacement = charMap[char]
+      assert.strictEqual(slug('foo' + char + ' bar baz'), 'foo' + replacement.toLowerCase() + '-bar-baz', 'replacing \'' + char + '\'')
+    }
   })
 })

@@ -142,17 +142,25 @@
       if (lengths.indexOf(len) === -1) { lengths.push(len) }
     }
 
+    // We want to match the longest string if there are multiple matches, so
+    // sort lengths in descending order.
+    lengths = lengths.sort(function (a, b) { return b - a })
+
     var result = ''
     for (let char, i = 0, l = string.length; i < l; i++) {
       char = string[i]
-      if (!lengths.some(function (len) {
+      let matchedMultichar = false
+      for (let j = 0; j < lengths.length; j++) {
+        const len = lengths[j]
         var str = string.substr(i, len)
         if (opts.multicharmap[str]) {
           i += len - 1
           char = opts.multicharmap[str]
-          return true
-        } else return false
-      })) {
+          matchedMultichar = true
+          break
+        }
+      }
+      if (!matchedMultichar) {
         if (localeMap[char]) {
           char = localeMap[char]
         } else if (opts.charmap[char]) {
@@ -194,7 +202,12 @@
     ड़: 'ugDha',
     ढ़: 'ugDhha',
     य़: 'Yi',
-    ज़: 'Za'
+    ज़: 'Za',
+    // multibyte hebrew
+    ' ָ': 'a',
+    ' ַ': 'a',
+    ' ּ': 'i',
+    ' ֿ': 'a'
   }
   slug.multicharmap = slug.defaults.multicharmap = Object.assign({}, initialMulticharmap)
 
@@ -773,6 +786,37 @@
     ხ: 'kh',
     ჯ: 'j',
     ჰ: 'h',
+    // hebrew
+    א: 'a',
+    ב: 'b',
+    ג: 'g',
+    ד: 'd',
+    ה: 'h',
+    ו: 'v',
+    ז: 'z',
+    ח: 'h',
+    ט: 't',
+    י: 'y',
+    ך: 'k',
+    כ: 'k',
+    ל: 'l',
+    ם: 'm',
+    מ: 'm',
+    ן: 'n',
+    נ: 'n',
+    ס: 's',
+    ע: 'e',
+    ף: 'p',
+    פ: 'p',
+    ץ: 'ts',
+    צ: 'ts',
+    ק: 'q',
+    ר: 'r',
+    ש: 'sh',
+    ת: 't',
+    ײ: 'i',
+    װ: 'y',
+    ױ: 'yi',
     // currency
     '€': 'euro',
     '₢': 'cruzeiro',
